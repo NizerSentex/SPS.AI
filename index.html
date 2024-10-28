@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPS.ai</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* General Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            margin: 0;
+            padding: 0 10px;
+        }
+
+        /* SPS.ai Logo Styling */
+        #logo h1 {
+            font-size: 2em;
+            color: #00ffcc;
+            text-shadow: 0px 0px 8px #00ffcc;
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            margin: 0;
+        }
+
+        /* Welcome Message Styling */
+        #welcome-container {
+            margin-top: 80px; /* Padding below the logo */
+        }
+
+        #welcome-message {
+            font-size: 1.8em;
+            color: #00ffcc;
+            text-shadow: 0px 0px 8px #00ffcc;
+        }
+
+        header p {
+            color: #bbbbbb;
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background-color: #1e1e1e;
+            color: #00ffcc;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #00ffcc;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 8px;
+        }
+
+        input[type="text"] {
+            background-color: #333;
+            color: #00ffcc;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 10px;
+            width: 90%;
+            max-width: 300px;
+            margin: 10px 0;
+        }
+
+        button {
+            background-color: #00ffcc;
+            color: #121212;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #00cca3;
+        }
+
+        /* Game Cards */
+        .games-section {
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .games-section h2 {
+            font-size: 1.5em;
+            color: #00ffcc;
+            text-align: left;
+            margin: 10px 0;
+        }
+
+        #games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .game-card {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+            color: #ffffff;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 0px 20px 5px #00ffcc;
+        }
+
+        /* Footer Styling */
+        footer {
+            background-color: #1e1e1e;
+            color: #bbbbbb;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: #00ffcc;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #logo h1 {
+                font-size: 1.5em;
+                left: 10px;
+            }
+
+            #welcome-message {
+                font-size: 1.5em;
+            }
+
+            .games-section h2 {
+                font-size: 1.3em;
+            }
+
+            .game-card {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #logo h1 {
+                font-size: 1.2em;
+            }
+
+            #welcome-container {
+                margin-top: 100px;
+            }
+
+            #welcome-message {
+                font-size: 1.2em;
+            }
+
+            button {
+                padding: 8px 16px;
+            }
+
+            #games-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SPS.ai Logo Header -->
+    <header>
+        <div id="logo">
+            <h1>SPS.ai</h1>
+        </div>
+        <div id="welcome-container">
+            <h2 id="welcome-message">Welcome </h2>
+            <p>Play your favorite games, rate them, and enjoy!</p>
+        </div>
+    </header>
+
+    <!-- Guidelines Modal with Display Name Input -->
+    <div id="guidelines-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeGuidelines()">&times;</span>
+            <h2>Welcome to SPS.ai !</h2>
+            <p>Enter your display name to get started:</p>
+            <input type="text" id="display-name" placeholder="Your name here" required>
+            <button onclick="saveDisplayName()">Start</button>
+            <p class="modal-instructions">Here’s how to get started:</p>
+            <ul>
+                <li>Select a game from the options below.</li>
+                <li>Each game has its own set of rules – click on "Game Rules" within each game to see them.</li>
+                <li>After playing, rate the game to help others choose their favorites!</li>
+                <li>Have fun and play responsibly!</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Game Cards Section -->
+    <main>
+        <!-- School Elements Section -->
+        <section class="games-section" id="school-games">
+            <h2>School Elements</h2>
+            <div id="games-grid">
+                <div class="game-card" onclick="location.href='community.html'">
+                    <h2>School Community</h2>
+                    <p>Connect with your friends anonymously.</p>
+                </div>
+                <!-- Add more school-related games here -->
+            </div>
+        </section>
+
+        <!-- Other Arcades Section -->
+        <section class="games-section" id="arcade-games">
+            <h2>Other Arcades</h2>
+            <div id="games-grid">
+                <div class="game-card" onclick="location.href='flames.html'">
+                    <h2>FLAMES</h2>
+                    <p>Check your compatibility with the classic FLAMES game!</p>
+                </div>
+                <div class="game-card" onclick="location.href='tictactoe.html'">
+                    <h2>Tic-Tac-Toe</h2>
+                    <p>Challenge your friends in this timeless game.</p>
+                </div>
+                <div class="game-card" onclick="location.href='woulyourather.html'">
+                    <h2>Would You Rather!</h2>
+                    <p>Test your knowledge with fun trivia questions.</p>
+                </div>
+                <div class="game-card" onclick="location.href='truthordare.html'">
+                    <h2>Truth or Dare</h2>
+                    <p>Get ready for some fun truth or dare challenges.</p>
+                </div>
+                <div class="game-card" onclick="location.href='image.html'">
+                    <h2>Image Editor</h2>
+                    <p>Edit your images, and share with your friends</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 SPS.ai. All rights reserved.</p>
+        <p>Follow us on <a href="#">Twitter</a> | <a href="#">Instagram</a> | <a href="#">Facebook</a></p>
+    </footer>
+
+    <script>
+        // Check if a display name is saved in local storage
+        window.onload = function() {
+            const savedName = localStorage.getItem("displayName");
+            if (savedName) {
+                // Display welcome message with the saved name
+                document.getElementById("welcome-message").textContent = `Welcome back, ${savedName}`;
+            } else {
+                // Show the modal if no name is found
+                document.getElementById("guidelines-modal").style.display = "block";
+            }
+        };
+
+        // Save the display name to local storage and update the welcome message
+        function saveDisplayName() {
+            const displayName = document.getElementById("display-name").value.trim();
+            if (displayName) {
+                localStorage.setItem("displayName", displayName); // Save name in local storage
+                document.getElementById("welcome-message").textContent = `Welcome, ${displayName}, to SPS.ai!`;
+                closeGuidelines(); // Close modal after saving
+            } else {
+                alert("Please enter your name to continue.");
+            }
+        }
+
+        // Close the modal
+        function closeGuidelines() {
+            document.getElementById("guidelines-modal").style.display = "none";
+        }
+
+        // Add sound effects on hover for game cards
+        const gameCards = document.querySelectorAll('.game-card');
+        const hoverSound = new Audio('hover-sound.mp3');
+
+        gameCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                hoverSound.play();
+            });
+        });
+        async function addPost() {
+            console.log("Starting to add post...");
+            const postText = document.getElementById("post-text").value.trim();
+            const username = localStorage.getItem('displayName') || "Anonymous";
+            if (!postText && !uploadedImage && !uploadedVideo) {
+                alert("Please add some text, an image, or a video to create a post.");
+                return;
+            }
+
+            // Data to send to Google Sheets
+            const postData = {
+                blank: "",
+                user: displayName,
+            
+            };
+
+            try {
+                const response = await fetch("https://script.google.com/macros/s/AKfycbxYUjUxKtE9W72SJmDUTWGI8JQpsJMBHc9H1UbQOXiTQVxvtaLTWhFVyXrPSqzfjiPk9g/exec", {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(postData)
+                });
+
+                console.log("Post request sent to Google Apps Script.");
+
+                // Clear input fields and reset uploaded files
+                document.getElementById("post-text").value = "";
+                document.getElementById("post-image").value = "";
+                document.getElementById("post-video").value = "";
+                uploadedImage = null;
+                uploadedVideo = null;
+
+                alert("Post saved successfully!");
+
+                // Refresh posts to show the new post
+                fetchPosts();
+
+            } catch (error) {
+                console.error("Failed to save post:", error);
+                alert("Failed to save post.");
+            }
+
+            // Close the modal
+            togglePostModal();
+            console.log("Completed add post request.");
+        } 
+        
+    </script>
+</body>
+</html>

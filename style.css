@@ -1,0 +1,281 @@
+/* Reset and Font */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Body and General Styling */
+body {
+    background-color: #121212;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+}
+
+header {
+    margin-bottom: 20px;
+}
+
+header h1 {
+    font-size: 2.5em;
+    color: #00ffcc;
+    text-shadow: 0px 0px 8px #00ffcc;
+}
+
+p, #flames-game p, .modal-content p, .modal-content ul li {
+    color: #bbbbbb;
+    font-size: 1.1em;
+    margin: 10px 0;
+}
+
+/* Game Cards Grid */
+#games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    width: 100%;
+}
+
+/* Game Card Styling */
+.game-card {
+    background-color: #1e1e1e;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.game-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, #00ffcc, transparent);
+    opacity: 0.3;
+    transform: rotate(45deg);
+    transition: 1s ease;
+}
+
+.game-card:hover::before {
+    transform: rotate(90deg);
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 20px 5px #00ffcc;
+}
+
+.game-card h2 {
+    font-size: 1.8em;
+    color: #00ffcc;
+    text-shadow: 0px 0px 6px #00ffcc;
+}
+
+/* Button Styling */
+button {
+    background-color: #00ffcc;
+    color: #121212;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s;
+    margin: 10px;
+}
+
+button:hover {
+    background-color: #00cca3;
+}
+
+/* Input Styling */
+input[type="text"] {
+    background-color: #333;
+    color: #00ffcc;
+    border: 1px solid #555;
+    border-radius: 5px;
+    padding: 10px;
+    width: 80%;
+    max-width: 300px;
+    margin: 10px 0;
+}
+
+/* Modal Styling */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+    background-color: #1e1e1e;
+    color: #00ffcc;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #00ffcc;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+}
+
+.close-button {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    color: #00ffcc;
+}
+
+/* Rating System Styling */
+.rating-system {
+    margin-top: 20px;
+}
+
+.rating-system h3 {
+    color: #00ffcc;
+    margin-bottom: 10px;
+}
+
+.stars span {
+    font-size: 2em;
+    color: #bbbbbb;
+    cursor: pointer;
+}
+
+.stars span:hover,
+.stars span:hover ~ span {
+    color: #00ffcc;
+}
+
+#average-rating {
+    font-size: 1.2em;
+    color: #00ffcc;
+    margin-top: 5px;
+}
+
+/* Tic-Tac-Toe Board Styling */
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-gap: 10px;
+    margin-top: 20px;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    background-color: #1e1e1e;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    color: #00ffcc;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.cell:hover {
+    transform: scale(1.1);
+}
+
+/* FLAMES Animation and Calculation Steps */
+#flames-game input {
+    background-color: #333;
+    color: #00ffcc;
+    border: 1px solid #555;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    width: calc(100% - 30px);
+}
+
+#flames-game button {
+    background-color: #00ffcc;
+    color: #121212;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#flames-game button:hover {
+    background-color: #00cca3;
+}
+
+#calculation-steps {
+    margin-top: 20px;
+    display: none; /* Hidden until calculation starts */
+}
+
+#crossed-letters {
+    font-size: 1.2em;
+    color: #bbbbbb;
+    margin-top: 10px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+#flames-animation {
+    display: flex;
+    justify-content: center;
+    font-size: 2em;
+    margin-top: 20px;
+    gap: 15px;
+    color: #00ffcc;
+    text-shadow: 0px 0px 6px #00ffcc;
+}
+
+#flames-animation span {
+    opacity: 0;
+    animation: flamesAppear 0.5s ease-in-out forwards;
+}
+
+#final-result {
+    font-size: 1.5em;
+    margin-top: 20px;
+    color: #00ffcc;
+    text-shadow: 0px 0px 8px #00ffcc;
+    animation: zoomIn 0.5s ease-in-out;
+}
+
+/* Keyframe Animations */
+@keyframes flamesAppear {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}

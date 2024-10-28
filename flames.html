@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPS.ai - FLAMES Game</title>
+    <style>
+        /* General Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        /* SPS.ai Logo Styling */
+        #logo {
+            position: fixed;
+            top: 15px;
+            left: 20px;
+        }
+
+        #logo h1 {
+            font-size: 1.8em;
+            color: #00ffcc;
+            text-shadow: 0px 0px 8px #00ffcc;
+            margin: 0;
+        }
+
+        /* Welcome Message */
+        #welcome-container {
+            margin-top: 70px; /* Padding below the logo */
+        }
+
+        #welcome-message {
+            font-size: 1.8em;
+            color: #00ffcc;
+            text-shadow: 0px 0px 8px #00ffcc;
+        }
+
+        /* FLAMES Game Content */
+        #flames-game {
+            margin-top: 30px;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        #flames-game input {
+            background-color: #333;
+            color: #00ffcc;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px;
+            width: calc(100% - 40px);
+            max-width: 300px;
+        }
+
+        #flames-game button {
+            background-color: #00ffcc;
+            color: #121212;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #flames-game button:hover {
+            background-color: #00cca3;
+        }
+
+        /* Calculation Steps */
+        #calculation-steps {
+            margin-top: 20px;
+            color: #bbbbbb;
+            font-size: 1.1em;
+        }
+
+        #flames-animation {
+            display: flex;
+            justify-content: center;
+            font-size: 2em;
+            margin-top: 20px;
+            gap: 15px;
+            color: #00ffcc;
+            text-shadow: 0px 0px 6px #00ffcc;
+        }
+
+        #flames-animation span {
+            opacity: 0;
+            animation: flamesAppear 0.5s ease-in-out forwards;
+        }
+
+        #final-result {
+            font-size: 1.5em;
+            margin-top: 20px;
+            color: #00ffcc;
+            text-shadow: 0px 0px 8px #00ffcc;
+            animation: zoomIn 0.5s ease-in-out;
+        }
+
+        /* Keyframe Animations */
+        @keyframes flamesAppear {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- SPS.ai Logo -->
+    <div id="logo">
+        <h1>SPS.ai</h1>
+    </div>
+
+    <!-- Welcome Message -->
+    <div id="welcome-container">
+        <h2 id="welcome-message">Welcome to the FLAMES Game</h2>
+    </div>
+
+    <!-- FLAMES Game Content -->
+    <div id="flames-game">
+        <p>Enter your names to check compatibility using the FLAMES game!</p>
+        <input type="text" id="name1" placeholder="Your Name">
+        <input type="text" id="name2" placeholder="Their Name">
+        <button onclick="playFlames()">Check Compatibility</button>
+
+        <!-- Animated Calculation Display -->
+        <div id="calculation-steps">
+            <h3>Calculation Steps</h3>
+            <p id="crossed-letters"></p>
+            <div id="flames-animation">
+                <span>F</span>
+                <span>L</span>
+                <span>A</span>
+                <span>M</span>
+                <span>E</span>
+                <span>S</span>
+            </div>
+            <p id="final-result"></p>
+        </div>
+    </div>
+
+    <script>
+        // Check if a display name is saved in local storage
+        window.onload = function() {
+            const savedName = localStorage.getItem("displayName");
+            if (savedName) {
+                document.getElementById("welcome-message").textContent = `Welcome back, ${savedName}, to the FLAMES Game!`;
+            }
+        };
+
+        // FLAMES game logic with animation
+        function playFlames() {
+            const name1 = document.getElementById("name1").value.toLowerCase().replace(/[^a-z]/g, "");
+            const name2 = document.getElementById("name2").value.toLowerCase().replace(/[^a-z]/g, "");
+
+            if (!name1 || !name2) {
+                alert("Please enter both names.");
+                return;
+            }
+
+            // Display the calculation steps and reset animation states
+            document.getElementById("calculation-steps").style.display = "block";
+            document.getElementById("crossed-letters").textContent = "";
+            document.getElementById("final-result").textContent = "";
+
+            const flamesResult = calculateFlames(name1, name2);
+            animateFlamesResult(flamesResult);
+        }
+
+        function calculateFlames(name1, name2) {
+            // Cross out matching letters and display remaining letters
+            let remainingLetters = [...name1, ...name2];
+            let crossedText = name1.split("").map(letter => 
+                name2.includes(letter) ? `<s>${letter}</s>` : letter
+            ).join(" ");
+            
+            document.getElementById("crossed-letters").innerHTML = `Crossed Letters: ${crossedText}`;
+
+            const uniqueCount = remainingLetters.length % 6;
+            const flames = ["Friends", "Love", "Affection", "Marriage", "Enemies", "Siblings"];
+            return flames[uniqueCount];
+        }
+
+        function animateFlamesResult(result) {
+            const flamesLetters = document.querySelectorAll("#flames-animation span");
+
+            flamesLetters.forEach((letter, index) => {
+                letter.style.animationDelay = `${index * 0.3}s`;
+            });
+
+            setTimeout(() => {
+                document.getElementById("final-result").textContent = `Your relationship is: ${result}`;
+            }, flamesLetters.length * 300);
+        }
+    </script>
+</body>
+</html>

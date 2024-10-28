@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Editor Tool</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Basic Styling */
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #00ffcc;
+            text-shadow: 0px 0px 8px #00ffcc;
+            margin-bottom: 20px;
+        }
+
+        #editor-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 600px;
+            width: 100%;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        #image-preview {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .controls, .tools {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        label {
+            color: #00ffcc;
+            margin-top: 10px;
+        }
+
+        input[type="range"], input[type="file"], input[type="text"] {
+            width: 100%;
+            margin: 5px 0 15px;
+        }
+
+        button {
+            background-color: #00ffcc;
+            color: #121212;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #00cca3;
+        }
+
+        /* Draggable Elements (Emoji and Text) */
+        .draggable {
+            position: absolute;
+            font-size: 2rem;
+            cursor: move;
+            user-select: none;
+        }
+
+        .draggable:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Editor Tool</h1>
+    <div id="editor-container">
+        <input type="file" id="upload" accept="image/*" onchange="loadImage(event)">
+        <img id="image-preview" src="" alt="Preview Image">
+
+        <!-- Filter Controls -->
+        <div class="controls">
+            <label for="brightness">Brightness</label>
+            <input type="range" id="brightness" min="0" max="200" value="100" onchange="applyFilters()">
+            <label for="contrast">Contrast</label>
+            <input type="range" id="contrast" min="0" max="200" value="100" onchange="applyFilters()">
+            <label for="grayscale">Grayscale</label>
+            <input type="range" id="grayscale" min="0" max="100" value="0" onchange="applyFilters()">
+            <label for="sepia">Sepia</label>
+            <input type="range" id="sepia" min="0" max="100" value="0" onchange="applyFilters()">
+        </div>
+
+        <button onclick="resetFilters()">Reset Filters</button>
+
+        <!-- Emoji and Text Tools -->
+        <div class="tools">
+            <button onclick="addEmoji()">Add Emoji</button>
+            <button onclick="addText()">Add Text</button>
+            <input type="text" id="text-input" placeholder="Enter text here" style="display:none;">
+        </div>
+    </div>
+
+    <script>
+        const imagePreview = document.getElementById('image-preview');
+
+        function loadImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                imagePreview.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+            resetFilters(); // Reset filters when a new image is uploaded
+        }
+
+        function applyFilters() {
+            const brightness = document.getElementById('brightness').value;
+            const contrast = document.getElementById('contrast').value;
+            const grayscale = document.getElementById('grayscale').value;
+            const sepia = document.getElementById('sepia').value;
+
+            imagePreview.style.filter = `
+                brightness(${brightness}%)
+                contrast(${contrast}%)
+                grayscale(${grayscale}%)
+                sepia(${sepia}%)
+            `;
+        }
+
+        function resetFilters() {
+            document.getElementById('brightness').value = 100;
+            document.getElementById('contrast').value = 100;
+            document.getElementById('grayscale').value = 0;
+            document.getElementById('sepia').value = 0;
+            applyFilters();
+        }
+
+        // Add Emoji Function
+        function addEmoji() {
+            const emoji = document.createElement('div');
+            emoji.className = 'draggable';
+            emoji.textContent = '😊';
+            emoji.style.left = '50%';
+            emoji.style.top = '50%';
+            emoji.style.fontSize = '2rem';
+            document.getElementById('editor-container').appendChild(emoji);
+            makeDraggable(emoji);
+        }
+
+        // Add Text Function
+        function addText() {
+            const text = document.getElementById('text-input');
+            text.style.display = 'block';
+            text.onkeypress = function(e) {
+                if (e.key === 'Enter' && text.value.trim() !== '') {
+                    const newText = document.createElement('div');
+                    newText.className = 'draggable';
+                    newText.textContent = text.value;
+                    newText.style.left = '50%';
+                    newText.style.top = '50%';
+                    newText.style.fontSize = '1.5rem';
+                    document.getElementById('editor-container').appendChild(newText);
+                    makeDraggable(newText);
+                    text.value = '';
+                    text.style.display = 'none';
+                }
+            };
+        }
+
+        // Draggable functionality
+        function makeDraggable(element) {
+            let posX = 0, posY = 0, startX = 0, startY = 0;
+
+            element.onmousedown = dragMouseDown;
+
+            function dragMouseDown(e) {
+                e.preventDefault();
+                startX = e.clientX;
+                startY = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e.preventDefault();
+                posX = startX - e.clientX;
+                posY = startY - e.clientY;
+                startX = e.clientX;
+                startY = e.clientY;
+                element.style.top = (element.offsetTop - posY) + "px";
+                element.style.left = (element.offsetLeft - posX) + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+    </script>
+</body>
+</html>

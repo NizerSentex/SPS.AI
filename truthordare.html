@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPS.ai - Truth or Dare</title>
+    <style>
+        /* General Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        /* SPS.ai Logo Styling */
+        #logo {
+            position: fixed;
+            top: 15px;
+            left: 20px;
+        }
+
+        #logo h1 {
+            font-size: 1.8em;
+            color: #00ffcc;
+            text-shadow: 0px 0px 8px #00ffcc;
+            margin: 0;
+        }
+
+        /* Welcome Message */
+        #welcome-container {
+            margin-top: 70px; /* Padding below the logo */
+        }
+
+        #welcome-message {
+            font-size: 1.8em;
+            color: #00ffcc;
+            text-shadow: 0px 0px 8px #00ffcc;
+        }
+
+        /* Truth or Dare Game Styling */
+        #game-container {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 700px;
+            margin-top: 30px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        #prompt {
+            font-size: 1.5em;
+            color: #00ffcc;
+            margin-top: 20px;
+        }
+
+        .choice {
+            padding: 15px 30px;
+            margin: 15px;
+            font-size: 1.3em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .choice-truth {
+            background-color: #0073e6;
+            color: #ffffff;
+        }
+
+        .choice-dare {
+            background-color: #e60000;
+            color: #ffffff;
+        }
+
+        .choice-truth:hover {
+            background-color: #0099ff;
+        }
+
+        .choice-dare:hover {
+            background-color: #ff3333;
+        }
+
+        /* Camera Feed Styling */
+        #camera-container {
+            margin-top: 20px;
+        }
+
+        video {
+            width: 320px;
+            height: 240px;
+            border-radius: 10px;
+            margin-top: 10px;
+            border: 2px solid #00ffcc;
+        }
+
+        /* Yes/No Buttons */
+        #yes-no-buttons {
+            margin-top: 20px;
+        }
+
+        #yes-no-buttons button {
+            background-color: #00ffcc;
+            color: #121212;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #yes-no-buttons button:hover {
+            background-color: #00cca3;
+        }
+
+        #score {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #00ffcc;
+        }
+    </style>
+</head>
+<body>
+    <!-- SPS.ai Logo -->
+    <div id="logo">
+        <h1>SPS.ai</h1>
+    </div>
+
+    <!-- Welcome Message -->
+    <div id="welcome-container">
+        <h2 id="welcome-message">Welcome to Truth or Dare</h2>
+    </div>
+
+    <!-- Truth or Dare Game Content -->
+    <div id="game-container">
+        <p id="prompt">Choose Truth or Dare!</p>
+        <div class="choice choice-truth" onclick="playGame('truth')">Truth</div>
+        <div class="choice choice-dare" onclick="playGame('dare')">Dare</div>
+
+        <!-- Camera Feed -->
+        <div id="camera-container">
+            <video id="camera" autoplay></video>
+        </div>
+        
+        <!-- Yes/No Buttons -->
+        <div id="yes-no-buttons" style="display: none;">
+            <button onclick="submitAnswer('Yes')">Yes</button>
+            <button onclick="submitAnswer('No')">No</button>
+        </div>
+    </div>
+
+    <!-- Score Display -->
+    <p id="score">Rounds Completed: 0</p>
+
+    <script>
+        // Expanded list of truth questions and dare challenges
+        const truths = [
+            { question: "Have you ever skipped school without telling anyone?", type: "yesno" },
+            { question: "Do you have a secret talent?", type: "yesno" },
+            { question: "Have you ever pretended to be sick to get out of something?", type: "yesno" },
+            { question: "Have you ever laughed at the wrong moment?", type: "yesno" },
+            { question: "Have you ever lied to impress someone?", type: "yesno" },
+            { question: "Do you think you could survive a week without your phone?", type: "yesno" },
+            { question: "Do you sing in the shower?", type: "yesno" },
+            { question: "Have you ever broken something and blamed someone else?", type: "yesno" },
+            { question: "Would you go on a blind date?", type: "yesno" },
+            { question: "Have you ever had a crush on a teacher?", type: "yesno" }
+        ];
+
+        const dares = [
+            { question: "Can you dance in public without being embarrassed?", type: "yesno" },
+            { question: "Would you sing in front of everyone here?", type: "yesno" },
+            { question: "Would you go an entire day without talking?", type: "yesno" },
+            { question: "Can you go outside and shout 'I love SPS.ai'?", type: "yesno" },
+            { question: "Would you pretend to be a superhero for 30 seconds?", type: "yesno" },
+            { question: "Would you call a friend and speak in an accent?", type: "yesno" },
+            { question: "Would you act like your favorite animal for a minute?", type: "yesno" },
+            { question: "Could you share the most recent photo on your phone?", type: "yesno" },
+            { question: "Would you try to eat something with your eyes closed?", type: "yesno" },
+            { question: "Can you make a funny face and hold it for 20 seconds?", type: "yesno" }
+        ];
+
+        let score = 0;
+        let cameraStream;
+
+        // Display Name Handling
+        window.onload = function() {
+            const savedName = localStorage.getItem("displayName");
+            if (savedName) {
+                document.getElementById("welcome-message").textContent = `Welcome, ${savedName}, to Truth or Dare!`;
+            }
+            startCamera(); // Automatically start the camera on load
+        };
+
+        // Automatically start the camera on page load
+        function startCamera() {
+            const cameraElement = document.getElementById("camera");
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    cameraStream = stream;
+                    cameraElement.srcObject = stream;
+                })
+                .catch(error => {
+                    alert("Camera access denied or unavailable.");
+                });
+        }
+
+        // Stop the camera when not needed
+        function stopCamera() {
+            if (cameraStream) {
+                const tracks = cameraStream.getTracks();
+                tracks.forEach(track => track.stop());
+            }
+        }
+
+        // Play Game with Chosen Type
+        function playGame(type) {
+            const promptContainer = document.getElementById("prompt");
+            const yesNoButtons = document.getElementById("yes-no-buttons");
+
+            // Select a random prompt based on choice
+            const prompt = type === 'truth'
+                ? truths[Math.floor(Math.random() * truths.length)]
+                : dares[Math.floor(Math.random() * dares.length)];
+
+            // Display the prompt and show Yes/No buttons
+            promptContainer.textContent = prompt.question;
+            yesNoButtons.style.display = "block";
+        }
+
+        // Submit Answer and Increment Score
+        function submitAnswer(answer) {
+            alert(`Your answer: ${answer}`);
+            score++;
+            document.getElementById("score").textContent = `Rounds Completed: ${score}`;
+
+            // Hide Yes/No buttons after answer submission
+            document.getElementById("yes-no-buttons").style.display = "none";
+            document.getElementById("prompt").textContent = "Choose Truth or Dare!";
+        }
+
+        // Stop the camera when leaving the page
+        window.onbeforeunload = function() {
+            stopCamera();
+        };
+    </script>
+</body>
+</html>

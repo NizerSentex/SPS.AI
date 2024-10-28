@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPS.ai - Community</title>
+    <style>
+        /* General Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Header Styling */
+        #header {
+            width: 100%;
+            background-color: #1e1e1e;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #00ffcc;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        #header h1 {
+            font-size: 1.5em;
+            margin: 0;
+            text-shadow: 0px 0px 8px #00ffcc;
+        }
+
+        #create-post-button {
+            background-color: #00ffcc;
+            color: #121212;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #create-post-button:hover {
+            background-color: #00cca3;
+        }
+
+        /* Main Content */
+        #main-content {
+            margin-top: 80px;
+            padding: 20px;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Post Styling */
+        .post {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+            box-shadow: 0px 0px 10px rgba(0, 255, 204, 0.1);
+        }
+
+        .post h4 {
+            margin-bottom: 10px;
+            color: #00ffcc;
+        }
+
+        .post img,
+        .post video {
+            max-width: 100%;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <div id="header">
+        <h1>SPS.ai Community</h1>
+        <button id="create-post-button" onclick="fetchPosts()">Load Posts</button>
+    </div>
+
+    <!-- Main Content Area -->
+    <div id="main-content">
+        <!-- Community Feed -->
+        <div id="community-feed">
+            <!-- Posts will be dynamically added here -->
+        </div>
+    </div>
+
+    <script>
+        let SHEET_ID = '1U9au3nWJhpnQIxDGg4tXLD7xCYCutDjKQYt-Zv1vdCs';
+        let SHEET_TITLE = 'Sheet1';
+        let SHEET_RANGE = 'A:E';
+
+        let FULL_URL = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?sheet=' + SHEET_TITLE + '&range=' + SHEET_RANGE;
+
+        // Fetch all posts from Google Sheets
+        async function fetchPosts() {
+            try {
+                const response = await fetch(FULL_URL);
+                const text = await response.text();
+                const jsonData = JSON.parse(text.substr(47).slice(0, -2));
+
+                const feed = document.getElementById('community-feed');
+                feed.innerHTML = '';
+
+                const rows = jsonData.table.rows;
+                rows.forEach(row => {
+                    const [timestamp, user, text, imageURL, videoURL] = row.c.map(cell => (cell ? cell.v : ''));
+
+                    const postElement = document.createElement('div');
+                    postElement.className = 'post';
+                    postElement.innerHTML = `
+                        <h4>${user}</h4>
+                        <p>${text}</p>
+                        ${imageURL ? `<img src="${imageURL}" alt="Post Image">` : ''}
+                        ${videoURL ? `<video src="${videoURL}" controls></video>` : ''}
+                    `;
+                    feed.appendChild(postElement);
+                });
+            } catch (error) {
+                console.error('Failed to fetch posts:', error);
+                alert('Failed to load community feed. Please check the console for details.');
+            }
+        }
+    </script>
+</body>
+
+</html>

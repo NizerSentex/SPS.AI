@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPS Community</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Header Styling */
+        #header {
+            width: 100%;
+            background-color: #1e1e1e;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #00ffcc;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        #header h1 {
+            font-size: 1.5em;
+            margin: 0;
+            text-shadow: 0px 0px 8px #00ffcc;
+        }
+
+        #back-to-main-button {
+            background-color: #00ffcc;
+            color: #121212;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            font-size: 0.9em;
+            margin-left: 15px;
+        }
+
+        #back-to-main-button:hover {
+            background-color: #00cca3;
+            transform: scale(1.1);
+        }
+
+        /* Main Content */
+        #main-content {
+            margin-top: 100px;
+            padding: 20px;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Post Styling */
+        .post {
+            background-color: #1e1e1e;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            width: 100%;
+            box-shadow: 0px 4px 15px rgba(0, 255, 204, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .post:hover {
+            transform: translateY(-10px);
+            box-shadow: 0px 8px 20px rgba(0, 255, 204, 0.5);
+        }
+
+        .post h4 {
+            margin-bottom: 10px;
+            color: #00ffcc;
+            font-weight: bold;
+        }
+
+        .post p {
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        .post img,
+        .post video {
+            max-width: 100%;
+            margin-top: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .file-attached {
+            font-size: 0.9em;
+            color: #cccccc;
+            margin-top: 5px;
+        }
+
+        /* Create Post Icon */
+        #create-post-icon {
+            font-size: 1.8em;
+            color: #00ffcc;
+            cursor: pointer;
+            transition: color 0.3s;
+            margin-left: 10px;
+        }
+
+        #create-post-icon:hover {
+            color: #00cca3;
+        }
+
+        /* Create Post Modal */
+        #create-post-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #1e1e1e;
+            border-radius: 20px;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0px 0px 15px rgba(0, 255, 204, 0.5);
+            z-index: 1001;
+        }
+
+        #create-post-modal h3 {
+            color: #00ffcc;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        #post-form textarea {
+            width: 100%;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            background-color: #333;
+            color: #ffffff;
+            resize: none;
+            height: 100px;
+            font-size: 1em;
+            line-height: 1.5;
+        }
+
+        .icon-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .icon {
+            font-size: 1.8em;
+            cursor: pointer;
+            color: #00ffcc;
+            transition: color 0.3s;
+        }
+
+        .icon:hover {
+            color: #00cca3;
+        }
+
+        #post-button {
+            margin-top: 20px;
+            background: linear-gradient(135deg, #00ffcc, #00cca3);
+            color: #121212;
+            padding: 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
+            width: 100%;
+            font-size: 1.1em;
+            font-weight: bold;
+            box-shadow: 0px 4px 10px rgba(0, 255, 204, 0.5);
+        }
+
+        #post-button:hover {
+            background: linear-gradient(135deg, #00cca3, #00b3a0);
+            box-shadow: 0px 8px 20px rgba(0, 255, 204, 0.7);
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <div id="header">
+        <div style="display: flex; align-items: center;">
+            <a href="index.html" style="text-decoration: none; color: inherit;">
+                <h1>SPS Community</h1>
+            </a>
+            <br>
+            <button id="back-to-main-button" onclick="navigateBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+        </div>
+            <span id="create-post-icon" onclick="togglePostModal()">
+                <i class="fas fa-pencil-alt"></i>
+            </span>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div id="main-content">
+        <!-- Community Feed -->
+        <div id="community-feed">
+            <!-- Posts will be dynamically added here -->
+        </div>
+    </div>
+
+    <!-- Create Post Modal -->
+    <div id="create-post-modal">
+        <span id="post-modal-close" onclick="togglePostModal()" style="cursor: pointer; color: #00ffcc; font-size: 1.5em; position: absolute; top: 15px; right: 20px;">&#10006;</span>
+        <h3>Create Post</h3>
+        <div id="post-form">
+            <textarea id="post-text" placeholder="What's on your mind?"></textarea>
+            <div class="icon-container">
+                <label for="post-image" class="icon">
+                    <i class="fas fa-image"></i>
+                    <input type="file" id="post-image" accept="image/*" onchange="handleFileUpload('image')" style="display: none;">
+                </label>
+                <label for="post-video" class="icon">
+                    <i class="fas fa-video"></i>
+                    <input type="file" id="post-video" accept="video/*" onchange="handleFileUpload('video')" style="display: none;">
+                </label>
+            </div>
+            <button id="post-button" onclick="addPost()">Post</button>
+        </div>
+    </div>
+
+    <script>
+        let uploadedImage = null;
+        let uploadedVideo = null;
+        let SHEET_ID = '1U9au3nWJhpnQIxDGg4tXLD7xCYCutDjKQYt-Zv1vdCs';
+        let SHEET_TITLE = 'Sheet1';
+        let SHEET_RANGE = 'A:G';
+
+        let FULL_URL = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?sheet=' + SHEET_TITLE + '&range=' + SHEET_RANGE;
+
+        // Automatically load posts when the page is loaded
+        window.onload = function() {
+            const savedName = localStorage.getItem("displayName");
+            if (!savedName) {
+                let username = prompt("Please enter your username:");
+                if (username) {
+                    localStorage.setItem('displayName', username);
+                } else {
+                    localStorage.setItem('displayName', 'Anonymous');
+                }
+            }
+            fetchPosts();
+        };
+
+        // Navigate back to the main page
+        function navigateBack() {
+            window.location.href = 'index.html';
+        }
+
+        // Toggle the Create Post Modal
+        function togglePostModal() {
+            const modal = document.getElementById("create-post-modal");
+            modal.style.display = modal.style.display === "none" || modal.style.display === "" ? "block" : "none";
+        }
+
+        // Handle file uploads and store the uploaded file temporarily
+        function handleFileUpload(type) {
+            const fileInput = type === 'image' ? document.getElementById("post-image") : document.getElementById("post-video");
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (type === 'image') {
+                        uploadedImage = e.target.result;
+                        document.getElementById("post-video").value = "";
+                        uploadedVideo = null;
+                    } else if (type === 'video') {
+                        uploadedVideo = e.target.result;
+                        document.getElementById("post-image").value = "";
+                        uploadedImage = null;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Function to add a post and send it to Google Sheets
+        async function addPost() {
+            console.log("Starting to add post...");
+            const postText = document.getElementById("post-text").value.trim();
+            const username = localStorage.getItem('displayName') || "Anonymous";
+            if (!postText && !uploadedImage && !uploadedVideo) {
+                alert("Please add some text, an image, or a video to create a post.");
+                return;
+            }
+
+            // Data to send to Google Sheets
+            const postData = {
+                blank: "",
+                user: username,
+                text: postText,
+                imageURL: uploadedImage || "",
+                videoURL: uploadedVideo || ""
+            };
+
+            try {
+                const response = await fetch("https://script.google.com/macros/s/AKfycbw2FxumRSLpr07aBQz8s5cNgNN_ChWyFquveij7LcM9MtbSce-ylPeoXxTVphBZW90j/exec", {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(postData)
+                });
+
+                console.log("Post request sent to Google Apps Script.");
+
+                // Clear input fields and reset uploaded files
+                document.getElementById("post-text").value = "";
+                document.getElementById("post-image").value = "";
+                document.getElementById("post-video").value = "";
+                uploadedImage = null;
+                uploadedVideo = null;
+
+                alert("Post saved successfully!");
+
+                // Refresh posts to show the new post
+                fetchPosts();
+
+            } catch (error) {
+                console.error("Failed to save post:", error);
+                alert("Failed to save post.");
+            }
+
+            // Close the modal
+            togglePostModal();
+            console.log("Completed add post request.");
+        }
+
+        // Fetch all posts from Google Sheets
+        async function fetchPosts() {
+            try {
+                const response = await fetch(FULL_URL);
+                const text = await response.text();
+                const jsonData = JSON.parse(text.substr(47).slice(0, -2));
+
+                const feed = document.getElementById('community-feed');
+                feed.innerHTML = '';
+
+                const rows = jsonData.table.rows;
+                rows.forEach(row => {
+                    const user = row.c[1] ? row.c[1].v : '';
+                    const text = row.c[2] ? row.c[2].v : '';
+                    const imageURL = row.c[3] ? row.c[3].v : '';
+                    const videoURL = row.c[4] ? row.c[4].v : '';
+
+                    const postElement = document.createElement('div');
+                    postElement.className = 'post';
+                    postElement.innerHTML = `
+                        <h4 Posted by ><i>Posted by</i> ${user}</h4>
+                        <p>${text}</p>
+                        ${imageURL ? `<div class="file-attached">Image Attached</div>` : ''}
+                        ${imageURL ? `<img src="${imageURL}" alt="Post Image">` : ''}
+                        ${videoURL ? `<div class="file-attached">Video Attached</div>` : ''}
+                        ${videoURL ? `<video src="${videoURL}" controls></video>` : ''}
+                    `;
+                    feed.appendChild(postElement);
+                });
+            } catch (error) {
+                console.error('Failed to fetch posts:', error);
+                alert('Failed to load community feed. Please contact the owner of this site.');
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPS.ai - Would You Rather</title>
+    <style>
+        /* General Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        /* SPS.ai Logo Styling */
+        #logo {
+            position: fixed;
+            top: 15px;
+            left: 20px;
+        }
+
+        #logo h1 {
+            font-size: 1.8em;
+            color: #00ffcc;
+            text-shadow: 0px 0px 8px #00ffcc;
+            margin: 0;
+        }
+
+        /* Welcome Message */
+        #welcome-container {
+            margin-top: 70px; /* Padding below the logo */
+        }
+
+        #welcome-message {
+            font-size: 1.8em;
+            color: #00ffcc;
+            text-shadow: 0px 0px 8px #00ffcc;
+        }
+
+        /* Would You Rather Game Styling */
+        #question-container {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 700px;
+            margin-top: 30px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        #question {
+            font-size: 1.7em;
+            margin-bottom: 30px;
+            color: #00ffcc;
+            text-shadow: 0px 0px 6px #00ffcc;
+        }
+
+        .option {
+            display: block;
+            padding: 20px;
+            font-size: 1.5em;
+            color: #ffffff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s, background-color 0.3s;
+            margin: 15px 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        .option-red {
+            background-color: #aa0000;
+        }
+
+        .option-green {
+            background-color: #008a00;
+        }
+
+        .option-red:hover {
+            background-color: #ff0000;
+            transform: scale(1.05);
+        }
+
+        .option-green:hover {
+            background-color: #00cc00;
+            transform: scale(1.05);
+        }
+
+        /* Progress Bar Styling */
+        .progress-bar {
+            border-radius: 5px;
+            margin-top: 10px;
+            position: relative;
+            height: 25px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .progress-percentage {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: #121212;
+            font-weight: bold;
+        }
+
+        .progress-bar-red .progress-bar-fill {
+            background-color: #ff4d4d;
+        }
+
+        .progress-bar-green .progress-bar-fill {
+            background-color: #66ff66;
+        }
+
+        #score {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #00ffcc;
+        }
+    </style>
+</head>
+<body>
+    <!-- SPS.ai Logo -->
+    <div id="logo">
+        <h1>SPS.ai</h1>
+    </div>
+
+    <!-- Welcome Message -->
+    <div id="welcome-container">
+        <h2 id="welcome-message">Welcome to Would You Rather</h2>
+    </div>
+
+    <!-- Would You Rather Game Content -->
+    <div id="question-container">
+        <p id="question">Would you rather...</p>
+
+        <!-- Options without images -->
+        <div class="option option-red" onclick="chooseOption(1)" id="option1">Option 1</div>
+        <div class="option option-green" onclick="chooseOption(2)" id="option2">Option 2</div>
+
+        <!-- Progress Bars to show percentages -->
+        <div class="progress-bar progress-bar-red" id="progress-bar-1" style="display: none;">
+            <div class="progress-bar-fill" id="fill-1"></div>
+            <span class="progress-percentage" id="percentage-1"></span>
+        </div>
+        <div class="progress-bar progress-bar-green" id="progress-bar-2" style="display: none;">
+            <div class="progress-bar-fill" id="fill-2"></div>
+            <span class="progress-percentage" id="percentage-2"></span>
+        </div>
+    </div>
+
+    <!-- Score Display -->
+    <p id="score">Questions Answered: 0</p>
+
+    <script>
+        // List of questions for the game
+        const questions = [
+            { option1: "be able to fly", option2: "be invisible" },
+            { option1: "live on the beach", option2: "live in the mountains" },
+            { option1: "have a pet dragon", option2: "have a pet unicorn" },
+            { option1: "never have to sleep", option2: "never have to eat" },
+            { option1: "be super strong", option2: "be super fast" },
+            { option1: "speak all languages", option2: "play all musical instruments" },
+            { option1: "explore space", option2: "explore the deep sea" }
+        ];
+
+        let score = 0;
+
+        // Display Name Handling
+        window.onload = function() {
+            const savedName = localStorage.getItem("displayName");
+            if (savedName) {
+                document.getElementById("welcome-message").textContent = `Welcome, ${savedName}, to Would You Rather!`;
+            }
+            loadQuestion();
+        };
+
+        // Load a random question from the list
+        function loadQuestion() {
+            // Hide progress bars and reset them
+            document.getElementById("progress-bar-1").style.display = "none";
+            document.getElementById("progress-bar-2").style.display = "none";
+            document.getElementById("fill-1").style.width = "0%";
+            document.getElementById("fill-2").style.width = "0%";
+
+            // Select a random question
+            const randomIndex = Math.floor(Math.random() * questions.length);
+            const question = questions[randomIndex];
+
+            // Display question options
+            document.getElementById("option1").textContent = question.option1;
+            document.getElementById("option2").textContent = question.option2;
+        }
+
+        // Handle option selection and load a new question
+        function chooseOption(option) {
+            score++;
+            document.getElementById("score").textContent = `Questions Answered: ${score}`;
+
+            // Simulate community voting percentages
+            const percentageOption1 = Math.floor(Math.random() * 51) + 25; // Between 25% and 75%
+            const percentageOption2 = 100 - percentageOption1;
+
+            // Display and animate progress bars
+            document.getElementById("progress-bar-1").style.display = "block";
+            document.getElementById("progress-bar-2").style.display = "block";
+
+            document.getElementById("fill-1").style.width = `${percentageOption1}%`;
+            document.getElementById("percentage-1").textContent = `${percentageOption1}% chose this`;
+
+            document.getElementById("fill-2").style.width = `${percentageOption2}%`;
+            document.getElementById("percentage-2").textContent = `${percentageOption2}% chose this`;
+
+            // Load new question after a delay
+            setTimeout(loadQuestion, 2000);
+        }
+    </script>
+</body>
+</html>
